@@ -1,83 +1,106 @@
 # ============================================================
-# app.py — Premium Streamlit IPL Score Predictor App
+# app.py — Premium Dark/Light Compatible IPL Score Predictor
 # Run with: streamlit run app.py
 # ============================================================
 
 import streamlit as st
 import pandas as pd
-import numpy as np
 import pickle
 
 # ------------------------------------------------------------
-# Page Config
+# PAGE CONFIG
 # ------------------------------------------------------------
 st.set_page_config(
     page_title="IPL Score Predictor",
-    layout="centered",
-    page_icon="🏏"
+    page_icon="🏏",
+    layout="centered"
 )
 
 # ------------------------------------------------------------
-# Custom Styling
+# PREMIUM CSS (Dark Mode Fixed)
 # ------------------------------------------------------------
 st.markdown("""
 <style>
 
-/* Main App Background */
+/* Import Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+
+/* Full App */
 .stApp {
-    background: linear-gradient(135deg, #f5f7fa, #dfe9f3);
-    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #eef2f7, #d9e4f5);
+    font-family: 'Poppins', sans-serif;
+    color: #111111 !important;
 }
 
-/* Title */
+/* Main Title */
 h1 {
-    color: #0d1b2a;
+    color: #0f172a !important;
     text-align: center;
-    font-weight: 800;
-    letter-spacing: 1px;
-    margin-bottom: 0;
+    font-size: 54px !important;
+    font-weight: 800 !important;
+    margin-bottom: 0px;
 }
 
-/* Paragraph */
-p {
-    font-size: 18px;
-    color: #333333;
+/* Subtitle */
+.subtitle {
+    text-align: center;
+    font-size: 20px;
+    color: #1e293b !important;
+    margin-bottom: 30px;
 }
 
-/* Divider spacing */
-hr {
-    margin-top: 10px;
-    margin-bottom: 20px;
+/* Labels + Text */
+label, p, div, span {
+    color: #111111 !important;
+}
+
+/* Input Boxes */
+[data-baseweb="select"] > div,
+.stNumberInput > div > div,
+.stSlider,
+.stRadio {
+    background: white !important;
+    border-radius: 12px !important;
+    color: black !important;
+    border: 1px solid #dbeafe;
+}
+
+/* Select Text */
+[data-baseweb="select"] * {
+    color: black !important;
+}
+
+/* Number Input Text */
+input {
+    color: black !important;
 }
 
 /* Buttons */
 .stButton > button {
-    background: linear-gradient(90deg, #1e3c72, #2a5298);
-    color: white;
-    border-radius: 10px;
-    font-weight: bold;
-    font-size: 16px;
-    height: 3em;
-    border: none;
     width: 100%;
+    height: 52px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(90deg, #0f172a, #2563eb);
+    color: white !important;
+    font-size: 18px;
+    font-weight: 700;
 }
 
-/* Inputs */
-.stSelectbox, .stNumberInput, .stSlider, .stRadio {
-    background-color: white;
-    border-radius: 10px;
-    padding: 5px;
-}
-
-/* Metric cards */
+/* Metric Cards */
 [data-testid="metric-container"] {
-    background-color: white;
-    border-radius: 12px;
-    padding: 15px;
-    box-shadow: 0px 4px 10px rgba(0,0,0,0.08);
+    background: white;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
 }
 
-/* Hide Streamlit Footer */
+/* Success / Info */
+.stAlert {
+    border-radius: 12px;
+}
+
+/* Hide Footer */
 footer {
     visibility: hidden;
 }
@@ -86,7 +109,7 @@ footer {
 """, unsafe_allow_html=True)
 
 # ------------------------------------------------------------
-# Load Model
+# LOAD MODEL
 # ------------------------------------------------------------
 @st.cache_resource
 def load_model():
@@ -101,12 +124,12 @@ def load_model():
 
 try:
     model, encoders = load_model()
-    model_loaded = True
-except FileNotFoundError:
-    model_loaded = False
+except:
+    st.error("Model files missing. Please train model first.")
+    st.stop()
 
 # ------------------------------------------------------------
-# Teams & Venues
+# DATA
 # ------------------------------------------------------------
 TEAMS = [
     "Mumbai Indians",
@@ -128,46 +151,32 @@ VENUES = [
     "MA Chidambaram Stadium",
     "Rajiv Gandhi International Cricket Stadium",
     "Arun Jaitley Stadium",
-    "Punjab Cricket Association IS Bindra Stadium",
+    "Punjab Cricket Association Stadium",
     "Sawai Mansingh Stadium",
-    "Narendra Modi Stadium",
-    "DY Patil Stadium"
+    "Narendra Modi Stadium"
 ]
 
 # ------------------------------------------------------------
-# Header
+# HEADER
 # ------------------------------------------------------------
 st.markdown("<h1>IPL Score Predictor</h1>", unsafe_allow_html=True)
-
 st.markdown(
-    "<p style='text-align:center;'>Predict the final innings score based on current match situation</p>",
+    "<div class='subtitle'>Predict the final innings score based on current match situation</div>",
     unsafe_allow_html=True
 )
 
-st.divider()
+st.markdown("---")
 
 # ------------------------------------------------------------
-# Error if model missing
-# ------------------------------------------------------------
-if not model_loaded:
-    st.error(
-        "Model files not found. Please run:\n\n"
-        "python data_setup.py\n"
-        "python feature_engineering.py\n"
-        "python train_model.py"
-    )
-    st.stop()
-
-# ------------------------------------------------------------
-# Inputs
+# INPUTS
 # ------------------------------------------------------------
 col1, col2 = st.columns(2)
 
 with col1:
     batting_team = st.selectbox("Batting Team", TEAMS)
     venue = st.selectbox("Venue", VENUES)
-    over = st.slider("Over Completed", min_value=6, max_value=19, value=10)
-    runs_so_far = st.number_input("Runs Scored So Far", min_value=0, max_value=250, value=80)
+    over = st.slider("Overs Completed", 6, 19, 10)
+    runs_so_far = st.number_input("Runs Scored So Far", 0, 250, 80)
 
 with col2:
     bowling_team = st.selectbox(
@@ -175,86 +184,77 @@ with col2:
         [team for team in TEAMS if team != batting_team]
     )
 
-    toss_batting = st.radio(
+    toss_choice = st.radio(
         "Did batting team win toss & choose to bat?",
         ["Yes", "No"]
     )
 
-    wickets_fallen = st.slider("Wickets Fallen", min_value=0, max_value=9, value=2)
-    last5_runs = st.number_input("Runs in Last 5 Overs", min_value=0, max_value=120, value=45)
+    wickets = st.slider("Wickets Fallen", 0, 9, 2)
+    last5 = st.number_input("Runs in Last 5 Overs", 0, 100, 45)
 
-st.divider()
+st.markdown("---")
 
 # ------------------------------------------------------------
-# Prediction
+# PREDICTION
 # ------------------------------------------------------------
-if st.button("Predict Final Score", use_container_width=True):
+if st.button("Predict Final Score"):
 
-    balls_bowled = over * 6
-    balls_remaining = max(0, 120 - balls_bowled)
-    crr = runs_so_far / over if over > 0 else 0
-    toss_bat_flag = 1 if toss_batting == "Yes" else 0
+    balls_remaining = 120 - (over * 6)
+    crr = runs_so_far / over
+    toss_flag = 1 if toss_choice == "Yes" else 0
 
-    # Safe encoding
-    def safe_encode(encoder, value):
-        classes = list(encoder.classes_)
-        if value in classes:
-            return encoder.transform([value])[0]
-        return 0
-
-    batting_enc = safe_encode(encoders["batting_team"], batting_team)
-    bowling_enc = safe_encode(encoders["bowling_team"], bowling_team)
-    venue_enc = safe_encode(encoders["venue"], venue)
+    def encode(enc, value):
+        try:
+            return enc.transform([value])[0]
+        except:
+            return 0
 
     input_df = pd.DataFrame([{
         "over": over,
         "runs_so_far": runs_so_far,
-        "wickets_fallen": wickets_fallen,
+        "wickets_fallen": wickets,
         "balls_remaining": balls_remaining,
-        "crr": round(crr, 4),
-        "last5_runs": last5_runs,
-        "toss_batting": toss_bat_flag,
-        "batting_team_enc": batting_enc,
-        "bowling_team_enc": bowling_enc,
-        "venue_enc": venue_enc
+        "crr": crr,
+        "last5_runs": last5,
+        "toss_batting": toss_flag,
+        "batting_team_enc": encode(encoders["batting_team"], batting_team),
+        "bowling_team_enc": encode(encoders["bowling_team"], bowling_team),
+        "venue_enc": encode(encoders["venue"], venue)
     }])
 
     prediction = int(model.predict(input_df)[0])
 
     # --------------------------------------------------------
-    # Results
+    # RESULTS
     # --------------------------------------------------------
-    st.markdown("## Match Prediction Result")
+    st.markdown("## Prediction Result")
 
-    r1, r2, r3 = st.columns(3)
+    a, b, c = st.columns(3)
 
-    r1.metric("Predicted Score", prediction)
-    r2.metric("Current Run Rate", f"{crr:.2f}")
-    r3.metric("Wickets Left", 10 - wickets_fallen)
+    a.metric("Predicted Score", prediction)
+    b.metric("Run Rate", round(crr, 2))
+    c.metric("Wickets Left", 10 - wickets)
 
-    low = prediction - 10
-    high = prediction + 10
+    st.info(f"Likely Final Range: {prediction-10} to {prediction+10}")
 
-    st.info(f"Likely Range: {low} - {high} runs")
-
-    st.markdown("---")
-
-    # Commentary
-    if wickets_fallen <= 2 and crr >= 9:
-        st.success("Explosive start! Batting side is dominating.")
-    elif wickets_fallen >= 6:
-        st.warning("Too many wickets lost. Score may fall below expectation.")
+    if wickets <= 2 and crr >= 9:
+        st.success("Explosive innings in progress!")
+    elif wickets >= 6:
+        st.warning("Too many wickets lost. Final score may drop.")
     elif crr < 6:
-        st.info("Slow start. Team may accelerate in death overs.")
+        st.info("Slow innings so far. Death overs acceleration possible.")
     else:
-        st.success("Balanced innings in progress.")
+        st.success("Balanced innings with strong finish possible.")
 
 # ------------------------------------------------------------
-# Footer
+# FOOTER
 # ------------------------------------------------------------
 st.markdown("---")
-
 st.markdown(
-    "<p style='text-align:center; color:gray;'>Built using XGBoost + Streamlit | IPL Dataset (2008–2020)</p>",
-    unsafe_allow_html=True
+"""
+<div style='text-align:center; color:#475569; font-size:15px;'>
+Built with XGBoost + Streamlit | IPL Dataset (2008–2020)
+</div>
+""",
+unsafe_allow_html=True
 )
