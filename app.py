@@ -11,7 +11,6 @@ import pickle
 # ── Page config ────────────────────────────────────────────
 st.set_page_config(
     page_title="IPL Score Predictor",
-    page_icon="🏏",
     layout="centered"
 )
 
@@ -45,7 +44,7 @@ VENUES = [
 ]
 
 # ── UI ─────────────────────────────────────────────────────
-st.title("🏏 IPL Score Predictor")
+st.title("IPL Score Predictor")
 st.markdown("Predict the **final innings score** based on current match situation.")
 st.divider()
 
@@ -60,13 +59,13 @@ if not model_loaded:
 col1, col2 = st.columns(2)
 
 with col1:
-    batting_team = st.selectbox("🏏 Batting Team", TEAMS)
-    venue        = st.selectbox("🏟️ Venue", VENUES)
+    batting_team = st.selectbox(" Batting Team", TEAMS)
+    venue        = st.selectbox(" Venue", VENUES)
     over         = st.slider("Over Completed", min_value=6, max_value=19, value=10)
     runs_so_far  = st.number_input("Runs Scored So Far", min_value=0, max_value=250, value=80)
 
 with col2:
-    bowling_team    = st.selectbox("🎳 Bowling Team", [t for t in TEAMS if t != batting_team])
+    bowling_team    = st.selectbox("Balling Team", [t for t in TEAMS if t != batting_team])
     toss_batting    = st.radio("Did batting team win toss & chose to bat?", ["Yes", "No"])
     wickets_fallen  = st.slider("Wickets Fallen", min_value=0, max_value=9, value=2)
     last5_runs      = st.number_input("Runs in Last 5 Overs", min_value=0, max_value=120, value=45)
@@ -74,7 +73,7 @@ with col2:
 st.divider()
 
 # ── Predict ─────────────────────────────────────────────────
-if st.button("🔮 Predict Final Score", use_container_width=True, type="primary"):
+if st.button(" Predict Final Score", use_container_width=True, type="primary"):
 
     balls_bowled    = over * 6
     balls_remaining = max(0, 120 - balls_bowled)
@@ -109,28 +108,28 @@ if st.button("🔮 Predict Final Score", use_container_width=True, type="primary
     prediction = int(model.predict(input_df)[0])
 
     # ── Result display ──────────────────────────────────────
-    st.markdown("### 📊 Prediction Result")
+    st.markdown("###  Prediction Result")
 
     r1, r2, r3 = st.columns(3)
-    r1.metric("🎯 Predicted Score", f"{prediction}")
-    r2.metric("📈 Current Run Rate", f"{crr:.2f}")
-    r3.metric("🏏 Wickets Left", f"{10 - wickets_fallen}")
+    r1.metric(" Predicted Score", f"{prediction}")
+    r2.metric(" Current Run Rate", f"{crr:.2f}")
+    r3.metric(" Wickets Left", f"{10 - wickets_fallen}")
 
     # Confidence range (±10 runs)
     low, high = prediction - 10, prediction + 10
-    st.info(f"📉 Likely range: **{low} – {high} runs** (±10 run confidence band)")
+    st.info(f" Likely range: **{low} – {high} runs** (±10 run confidence band)")
 
     # Pace commentary
     projected_crr = prediction / 20
     st.markdown("---")
     if wickets_fallen <= 2 and crr >= 9:
-        st.success("🔥 Explosive start! Batting team is on fire.")
+        st.success(" Explosive start!! Batting team is on fire.")
     elif wickets_fallen >= 6:
-        st.warning("⚠️ Many wickets down. Score might be lower than projected.")
+        st.warning("Many wickets down. Score might be lower than projected.")
     elif crr < 6:
-        st.info("🐢 Slow start. Team may accelerate in the death overs.")
+        st.info("Slow start. Team may accelerate in the death overs.")
     else:
-        st.success("✅ Solid innings in progress.")
+        st.success("Solid innings in progress.")
 
 # ── Footer ──────────────────────────────────────────────────
 st.markdown("---")
