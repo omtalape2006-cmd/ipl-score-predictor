@@ -601,7 +601,7 @@ st.markdown(f"""
                 border-radius:8px; padding:10px 16px; font-family:'Bebas Neue',sans-serif;
                 font-size:1rem; letter-spacing:2px; color:{bowl_tc['text']};
                 border-left:4px solid {bowl_tc['secondary']}; box-shadow:0 4px 16px {bowl_tc['primary']}44;">
-        🎳 {bowling_team}
+        🥎 {baling_team}
     </div>
 </div>
 """, unsafe_allow_html=True)
