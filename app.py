@@ -576,7 +576,7 @@ with col1:
     runs_so_far  = st.number_input("Runs Scored So Far", min_value=0, max_value=250, value=80)
 
 with col2:
-    bowling_team   = st.selectbox("🎳 Bowling Team", [t for t in TEAMS if t != batting_team])
+    balling_team   = st.selectbox("🥎 Balling Team", [t for t in TEAMS if t != batting_team])
     toss_batting   = st.radio("Did batting team win toss & chose to bat?", ["Yes", "No"])
     wickets_fallen = st.slider("Wickets Fallen", min_value=0, max_value=9, value=2)
     last5_runs     = st.number_input("Runs in Last 5 Overs", min_value=0, max_value=120, value=45)
@@ -601,7 +601,7 @@ st.markdown(f"""
                 border-radius:8px; padding:10px 16px; font-family:'Bebas Neue',sans-serif;
                 font-size:1rem; letter-spacing:2px; color:{bowl_tc['text']};
                 border-left:4px solid {bowl_tc['secondary']}; box-shadow:0 4px 16px {bowl_tc['primary']}44;">
-        🥎 {baling_team}
+        🥎 {balling_team}
     </div>
 </div>
 """, unsafe_allow_html=True)
