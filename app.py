@@ -586,7 +586,7 @@ st.session_state.batting_team = batting_team
 
 # Team color banner
 bat_tc = TEAM_COLORS.get(batting_team, TEAM_COLORS[TEAMS[0]])
-bowl_tc = TEAM_COLORS.get(bowling_team, TEAM_COLORS[TEAMS[1]])
+bowl_tc = TEAM_COLORS.get(balling_team, TEAM_COLORS[TEAMS[1]])
 st.markdown(f"""
 <div style="display:flex; gap:10px; margin:10px 0;">
     <div style="flex:1; background:linear-gradient(90deg, {bat_tc['primary']}, {bat_tc['secondary']}88);
@@ -624,7 +624,7 @@ if st.button("🔮 PREDICT FINAL SCORE", use_container_width=True, type="primary
             return 0
 
     batting_enc = safe_encode(encoders["batting_team"], batting_team)
-    bowling_enc = safe_encode(encoders["bowling_team"], bowling_team)
+    bowling_enc = safe_encode(encoders["bowling_team"], balling_team)
     venue_enc   = safe_encode(encoders["venue"], venue)
 
     input_df = pd.DataFrame([{
